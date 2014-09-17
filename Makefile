@@ -1,0 +1,3 @@
+./favs:
+	go build
+	./favs
