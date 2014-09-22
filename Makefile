@@ -1,3 +1,3 @@
-./favs:
+favs: main.go
 	go build
-	./favs
+	./favs > favs.txt

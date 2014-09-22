@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ChimeraCoder/anaconda"
 	"net/url"
+	"regexp"
 	"strings"
 )
 
@@ -19,10 +20,15 @@ func main() {
 
 	v := url.Values{}
 	v.Set("screen_name", "kaihendry")
-	v.Set("count", "2")
+	v.Set("count", "200")
 
 	searchResult, err := api.GetFavorites(v)
 
+	if err != nil {
+		panic(err)
+	}
+
+	reg, err := regexp.Compile(`[\s]+`)
 	if err != nil {
 		panic(err)
 	}
@@ -31,11 +37,13 @@ func main() {
 	for _, tweet := range searchResult {
 		// fmt.Println("Count", k)
 		// fmt.Println(tweet)
+		tweet.Text = reg.ReplaceAllString(tweet.Text, " ")
+		tweet.Text = strings.TrimSpace(tweet.Text)
 		t := fmt.Sprintf("%s|%s|%s|%s", tweet.IdStr, tweet.User.ScreenName, tweet.CreatedAt, tweet.Text)
 
-		if tweet.Truncated {
-			fmt.Println("Truncated!")
-		}
+		// if tweet.Truncated {
+		// 	fmt.Println("Truncated!")
+		// }
 
 		//fmt.Println("O", t)
 
@@ -51,8 +59,6 @@ func main() {
 			//fmt.Println("Media URL", m.Media_url)
 			t = strings.Replace(t, m.Url, m.Media_url, -1)
 		}
-
 		fmt.Println(t)
-
 	}
 }
